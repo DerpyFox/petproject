@@ -5,7 +5,12 @@
   "description": "README",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn index.ts"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -27,7 +32,8 @@
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "rxjs": "^7.8.2",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
