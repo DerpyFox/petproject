@@ -3,11 +3,16 @@ import Tutorial from "../models/tutorial.model.js";
 
 interface ITutorialRepository {
   save(tutorial: Tutorial): Promise<Tutorial>;
-  retrieveAll(searchParams: {title: string, published: boolean}): Promise<Tutorial[]>;
+  retrieveAll(searchParams: IRetrieveParams): Promise<Tutorial[]>;
   retrieveById(tutorialId: number): Promise<Tutorial | null>;
   update(tutorial: Tutorial): Promise<number>;
   delete(tutorialId: number): Promise<number>;
   deleteAll(): Promise<number>;
+}
+
+interface IRetrieveParams {
+  username?: string;
+  role?: "user" | "admin";
 }
 
 type SearchCondition = Record<string, unknown>;
@@ -16,9 +21,10 @@ class TutorialRepository implements ITutorialRepository {
   async save(tutorial: Tutorial): Promise<Tutorial> {
     try {
       return await Tutorial.create({
-        title: tutorial.title,
-        description: tutorial.description,
-        published: tutorial.published
+        username: tutorial.username,
+        email: tutorial.email,
+        password_hash: tutorial.password_hash,
+        role: tutorial.role ?? "user"
       });
     } catch (err: unknown) {
       console.error(err);
@@ -26,16 +32,20 @@ class TutorialRepository implements ITutorialRepository {
     }
   }
 
-  async retrieveAll(searchParams: {title?: string, published?: boolean}): Promise<Tutorial[]> {
+  async retrieveAll(searchParams: IRetrieveParams): Promise<Tutorial[]> {
     try {
       const condition: SearchCondition = {};
 
-      if (searchParams?.published) condition.published = true;
+      if (searchParams?.role) {
+        condition.role = searchParams.role;
+      }
+      if (searchParams?.username) {
+        condition.username = { [Op.iLike]: `%${searchParams.username}%` };
+      }
 
-      if (searchParams?.title)
-        condition.title = { [Op.iLike]: `%${searchParams.title}%` };
+      const rows = await Tutorial.findAll({ where: condition });
+      return rows as Tutorial[];
 
-      return await Tutorial.findAll({ where: condition });
     } catch (error: unknown) {
       console.error(error);
       throw new Error("Failed to retrieve Tutorials!");
@@ -52,11 +62,15 @@ class TutorialRepository implements ITutorialRepository {
   }
 
   async update(tutorial: Tutorial): Promise<number> {
-    const { id, title, description, published } = tutorial;
+    const { id, username, email, password_hash, role } = tutorial;
 
+    if (typeof id !== "number") {
+      throw new Error("Tutorial id is required for update");
+    }
+    
     try {
       const affectedRows = await Tutorial.update(
-        { title, description, published },
+        { username, email, password_hash, role },
         { where: { id: id } }
       );
 

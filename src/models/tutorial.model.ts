@@ -1,7 +1,8 @@
-import { Model, Table, Column, DataType } from "sequelize-typescript";
+import { Model, Table, Column, DataType, Default, CreatedAt, UpdatedAt } from "sequelize-typescript";
 
 @Table({
-  tableName: "tutorials",
+  tableName: "users",
+  timestamps: true,
 })
 export default class Tutorial extends Model {
   @Column({
@@ -13,20 +14,48 @@ export default class Tutorial extends Model {
   declare id?: number;
 
   @Column({
-    type: DataType.STRING(255),
-    field: "title"
+    type: DataType.STRING(50),
+    allowNull: false,
+    unique: true,
+    field: "username"
   })
-  declare title?: string;
+  declare username?: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+    unique: true,
+    field: "email"
+  })
+  declare email?: string;
 
   @Column({
     type: DataType.STRING(255),
-    field: "description"
+    allowNull: false,
+    field: "password_hash"
   })
-  declare description?: string;
+  declare password_hash?: string;
 
+  @Default("user")
   @Column({
-    type: DataType.BOOLEAN,
-    field: "published"
+    type: DataType.ENUM("user", "admin"),
+    allowNull: false,
+    field: "role"
   })
-  declare published?: boolean;
+  declare role?: "user" | "admin";
+
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    field: "created_at"
+  })
+  declare createdAt?: Date;
+
+  @UpdatedAt
+  @Column({
+    type: DataType.DATE,
+    field: "updated_at"
+  })
+  declare updatedAt?: Date;
+
 }

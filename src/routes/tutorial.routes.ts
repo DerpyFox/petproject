@@ -17,7 +17,7 @@ class TutorialRoutes {
     this.router.get("/", this.controller.findAll);
 
     // Retrieve all published Tutorials
-    this.router.get("/published", this.controller.findAllPublished);
+    this.router.get("/published", this.controller.findAllUsers);
 
     // Retrieve a single Tutorial with id
     this.router.get("/:id", this.controller.findOne);

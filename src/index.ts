@@ -5,6 +5,8 @@ import type { CorsOptions } from "cors";
 import Routes from "./routes/index.js";
 import Database from "./db/index.js";
 
+console.log('ts server running on port ____');
+
 export default class Server {
   constructor(app: Application) {
     this.config(app);

@@ -4,16 +4,15 @@ import tutorialRepository from "../repositories/tutorial.repository.js";
 
 export default class TutorialController {
   async create(req: Request, res: Response) {
-    if (!req.body.title) {
+    if (!req.body.username || !req.body.email) {
       res.status(400).send({
-        message: "Content can not be empty!"
+        message: "Username and email can not be empty!"
       });
       return;
     }
 
     try {
       const tutorial: Tutorial = req.body;
-      if (!tutorial.published) tutorial.published = false;
 
       const savedTutorial = await tutorialRepository.save(tutorial);
 
@@ -27,12 +26,13 @@ export default class TutorialController {
   }
 
   async findAll(req: Request, res: Response) {
-    const title = typeof req.query.title === "string" ? req.query.title : "";
+    const username = typeof req.query.username === "string" ? req.query.username : "";
+    const role = typeof req.query.role === "string" ? (req.query.role as "user" | "admin") : "user";
 
     try {
-      const tutorials = await tutorialRepository.retrieveAll({ title });
+      const users = await tutorialRepository.retrieveAll({ username, role });
 
-      res.status(200).send(tutorials);
+      res.status(200).send(users);
     } catch (err: unknown) {
       console.error(err);
       res.status(500).send({
@@ -120,15 +120,15 @@ export default class TutorialController {
     }
   }
 
-  async findAllPublished(req: Request, res: Response) {
+  async findAllUsers(req: Request, res: Response) {
     try {
-      const tutorials = await tutorialRepository.retrieveAll({ published: true });
+      const users = await tutorialRepository.retrieveAll({ role: "user" });
 
-      res.status(200).send(tutorials);
+      res.status(200).send(users);
     } catch (err: unknown) {
       console.error(err);
       res.status(500).send({
-        message: "Some error occurred while retrieving tutorials."
+        message: "Some error occurred while retrieving users."
       });
     }
   }
