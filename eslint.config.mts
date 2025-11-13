@@ -18,7 +18,8 @@ export default defineConfig([
       "tsconfig.json",
       ".env",
       "**/*.test.ts",
-      "**/*.spec.ts"
+      "**/*.spec.ts",
+      "sequelize.config.cjs"
     ]
   },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.node } },

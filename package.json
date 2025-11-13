@@ -10,7 +10,12 @@
     "dev": "node --loader ts-node/esm server.ts",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "build:migrations": "tsc -p tsconfig.migrations.json",
+    "db:migrate": "npm run build:migrations && npx sequelize db:migrate",
+    "db:migrate:undo": "npm run build:migrations && npx sequelize db:migrate:undo",
+    "db:seed": "npm run build:migrations && npx sequelize db:seed:all",
+    "db:seed:undo": "npm run build:migrations && npx sequelize db:seed:undo:all"
   },
   "repository": {
     "type": "git",
